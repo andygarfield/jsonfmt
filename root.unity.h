@@ -1,0 +1,11 @@
+#pragma once
+#include "shared.c"
+#include "syscall.c"
+#include "syscall/mmap.c"
+#include "syscall/open.c"
+#include "syscall/read.c"
+#include "syscall/write.c"
+#include "string.c"
+#include "alloc.c"
+#include "json.c"
+#include "main.c"
