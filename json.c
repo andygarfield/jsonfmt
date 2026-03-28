@@ -527,7 +527,9 @@ internal void printWhitespace(u8 indentAmount, s8 indentLevel, JsonTokenType thi
 	if (lastToken != TOKEN_TYPE_OBJECT_KEY) {
 		int emptyObject = (lastToken == TOKEN_TYPE_OBJECT_START && thisToken == TOKEN_TYPE_OBJECT_END);
 		int emptyArray = (lastToken == TOKEN_TYPE_ARRAY_START && thisToken == TOKEN_TYPE_ARRAY_END);
-		if (!(emptyObject || emptyArray)) {
+		int veryStart = (lastToken == 0);
+
+		if (!(emptyObject || emptyArray || veryStart)) {
 			printChar("\n");
 
 			for (size_t i = 0; i < (u8)(indentLevel); i++) {

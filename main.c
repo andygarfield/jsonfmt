@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
 	const u8 **args = (const u8 **)argv;
 
 	// Hard-limit of 500MiB per JSON file
-    //
+	//
 	// TODO: this is assuming 4096 bytes per page. Page size is
 	// architecture-dependent though. For instance, on Arm-based Macs, the page
 	// size is 16kb.
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 	JsonStringReader r = newJsonStringReader(wholeBufferStr);
 	JsonToken t;
 
-	JsonTokenType lastToken;
+	JsonTokenType lastToken = 0;
 	while (true) {
 		t = jsonNext(&r);
 
@@ -75,6 +75,7 @@ int main(int argc, char *argv[]) {
 			printChar("\": ");
 			break;
 		case TOKEN_TYPE_ARRAY_START:
+			printWhitespace(INDENT_AMOUNT, r.containerStackPos, t.tokenType, lastToken);
 			printChar("[");
 			break;
 		case TOKEN_TYPE_ARRAY_END:
@@ -83,6 +84,7 @@ int main(int argc, char *argv[]) {
 			break;
 		case TOKEN_TYPE_EOF:
 			printChar("\n");
+			lastToken = t.tokenType;
 			goto afterLoop;
 		case TOKEN_TYPE_ERROR:
 			printChar("\nerror");

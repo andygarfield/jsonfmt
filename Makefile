@@ -1,6 +1,6 @@
 .POSIX:
 CLANG_FLAGS = -std=c99 -O3 -Wall -Wextra -Werror -nostdlib -lSystem -fdelete-null-pointer-checks
-CLANG_DB_FLAGS = -std=c99 -O0 -Wall Wextra -Werror -g
+CLANG_DB_FLAGS = -std=c99 -O0 -Wall -Wextra -Werror -g
 
 GCC_FLAGS = -s -O3 -fdata-sections -Wl,-gc-sections -Wl,--gc-sections \
 	-fno-unwind-tables -fno-asynchronous-unwind-tables -fno-builtin -std=c99 \
