@@ -22,8 +22,8 @@ jsonfmt my_file.json
 ```
 
 ## future improvements
-[ ] JSON streams (instead of just a single value)
-[ ] Parity with JQ formatting
-[ ] Minifying
-[ ] Configuration
-[ ] Use non-blocking syscalls (kqueue / kevent on mac; io_uring on linux)
+- [ ] JSON streams (instead of just a single value)
+- [ ] Parity with JQ formatting
+- [ ] Minifying
+- [ ] Configuration
+- [ ] Use non-blocking syscalls (kqueue / kevent on mac; io_uring on linux)
