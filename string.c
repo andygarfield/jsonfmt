@@ -30,16 +30,6 @@ typedef struct {
 //	a->len++;
 // }
 
-internal u64 strlen(u8 const *str) {
-	u64 i;
-	for (i = 0; i < MAX_STRING_SIZE; ++i) {
-		if (str[i] == 0) {
-			break;
-		}
-	}
-	return i;
-}
-
 ///
 /// copies an array
 ///
@@ -53,6 +43,29 @@ void memcpy_(void *dest, const void *src, u64 n) {
 
 static u16 writeBufferPos = 0;
 static char writeBuffer[2 << 13] = {0};
+
+#ifdef DEBUG_W_STDLIB
+#pragma once
+#include <stdio.h>
+internal void printFlush() {}
+internal void printRefString(String s, RefString r) { printf("%*.*s", (int)r.len, (int)r.len, s.buffer + r.start); }
+internal void printChar(char *s) { printf("%s", s); }
+#else
+internal u64 strlen(u8 const *str) {
+	u64 i;
+	for (i = 0; i < MAX_STRING_SIZE; ++i) {
+		if (str[i] == 0) {
+			break;
+		}
+	}
+	return i;
+}
+
+internal String newString(char *s) {
+	u8 *buffer = (u8 *)s;
+	String str = {.buffer = buffer, .len = strlen(buffer)};
+	return str;
+}
 
 internal void print(String s) {
 	u64 remaining = s.len;
@@ -71,17 +84,11 @@ internal void print(String s) {
 		remaining -= writeAmount;
 	}
 }
-
 internal void printFlush() { write_(1, (void *)writeBuffer, writeBufferPos); }
-
-// internal void printErr(String s) { write_(2, (void *)s.buffer, s.len); }
-
 internal void printRefString(String s, RefString r) { print((String){.buffer = s.buffer + r.start, .len = r.len}); }
-
-internal String newString(char *s) {
-	u8 *buffer = (u8 *)s;
-	String str = {.buffer = buffer, .len = strlen(buffer)};
-	return str;
-}
-
 internal void printChar(char *s) { print(newString(s)); }
+#endif
+
+#ifdef DEBUG_W_STDLIB
+#else
+#endif

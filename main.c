@@ -34,60 +34,71 @@ int main(int argc, char *argv[]) {
 	JsonToken t;
 
 	JsonTokenType lastToken = 0;
+	u8 indentLevel = 0;
 	while (true) {
 		t = jsonNext(&r);
 
 		switch (t.tokenType) {
 		case TOKEN_TYPE_STRING:
-			printWhitespace(INDENT_AMOUNT, r.containerStackPos, t.tokenType, lastToken);
+			printWhitespace(INDENT_AMOUNT, indentLevel, t.tokenType, lastToken);
 			printChar("\"");
 			printRefString(wholeBufferStr, t.data);
 			printChar("\"");
 			break;
 		case TOKEN_TYPE_NUMBER:
-			printWhitespace(INDENT_AMOUNT, r.containerStackPos, t.tokenType, lastToken);
+			printWhitespace(INDENT_AMOUNT, indentLevel, t.tokenType, lastToken);
 			printRefString(wholeBufferStr, t.data);
 			break;
 		case TOKEN_TYPE_TRUE:
-			printWhitespace(INDENT_AMOUNT, r.containerStackPos, t.tokenType, lastToken);
+			printWhitespace(INDENT_AMOUNT, indentLevel, t.tokenType, lastToken);
 			printChar("true");
 			break;
 		case TOKEN_TYPE_FALSE:
-			printWhitespace(INDENT_AMOUNT, r.containerStackPos, t.tokenType, lastToken);
+			printWhitespace(INDENT_AMOUNT, indentLevel, t.tokenType, lastToken);
 			printChar("false");
 			break;
 		case TOKEN_TYPE_NULL:
-			printWhitespace(INDENT_AMOUNT, r.containerStackPos, t.tokenType, lastToken);
+			printWhitespace(INDENT_AMOUNT, indentLevel, t.tokenType, lastToken);
 			printChar("null");
 			break;
 		case TOKEN_TYPE_OBJECT_START:
-			printWhitespace(INDENT_AMOUNT, r.containerStackPos, t.tokenType, lastToken);
+			printWhitespace(INDENT_AMOUNT, indentLevel, t.tokenType, lastToken);
 			printChar("{");
+			indentLevel++;
 			break;
 		case TOKEN_TYPE_OBJECT_END:
-			printWhitespace(INDENT_AMOUNT, r.containerStackPos, t.tokenType, lastToken);
+			indentLevel--;
+			printWhitespace(INDENT_AMOUNT, indentLevel, t.tokenType, lastToken);
 			printChar("}");
 			break;
 		case TOKEN_TYPE_OBJECT_KEY:
-			printWhitespace(INDENT_AMOUNT, r.containerStackPos, t.tokenType, lastToken);
+			printWhitespace(INDENT_AMOUNT, indentLevel, t.tokenType, lastToken);
 			printChar("\"");
 			printRefString(wholeBufferStr, t.data);
 			printChar("\": ");
 			break;
 		case TOKEN_TYPE_ARRAY_START:
-			printWhitespace(INDENT_AMOUNT, r.containerStackPos, t.tokenType, lastToken);
+			printWhitespace(INDENT_AMOUNT, indentLevel, t.tokenType, lastToken);
 			printChar("[");
+			indentLevel++;
 			break;
 		case TOKEN_TYPE_ARRAY_END:
-			printWhitespace(INDENT_AMOUNT, r.containerStackPos, t.tokenType, lastToken);
+			indentLevel--;
+			printWhitespace(INDENT_AMOUNT, indentLevel, t.tokenType, lastToken);
 			printChar("]");
 			break;
 		case TOKEN_TYPE_EOF:
+			// 2 EOFs in a row means we really hit the end of the file
+			if (lastToken == TOKEN_TYPE_EOF) {
+				goto afterLoop;
+			}
 			printChar("\n");
 			lastToken = t.tokenType;
-			goto afterLoop;
+			resetJsonStringReader(r);
+			break;
 		case TOKEN_TYPE_ERROR:
-			printChar("\nerror");
+			printChar("\nparse error\n");
+			printFlush();
 			return 1;
 
 		default:

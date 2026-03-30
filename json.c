@@ -37,20 +37,21 @@ typedef enum {
 
 // clang-format off
 
-/// Table mapping the current state of the parser with valid new states. `255`
-/// is a sentinel value indicating that we don't need to iterate any more.
-static u8 validNewStates[115] = {
+/// Table mapping the current state of the parser with valid new states. Each
+/// state has only 4 valid new states, where we use `255` if we don't need to
+/// iterate any more.
+static u8 validNewStates[] = {
     // Valid states from PARSE_STATE_START, CONTAINER_NONE
 	PARSE_STATE_SCALAR,
 	PARSE_STATE_ARRAY_START,
 	PARSE_STATE_OBJECT_START,
 	255,
     // Valid states from PARSE_STATE_SCALAR, CONTAINER_NONE
+	PARSE_STATE_SCALAR,
+	PARSE_STATE_ARRAY_START,
+	PARSE_STATE_OBJECT_START,
 	PARSE_STATE_END,
-	255,
-    0,
-    0,
-    0,
+	0,
     0,
     0, // 10
     0,
@@ -63,10 +64,10 @@ static u8 validNewStates[115] = {
     0,
     0,
     // Valid states from PARSE_STATE_ARRAY_END, CONTAINER_NONE
-    PARSE_STATE_END, // 20
-    255,
-    0,
-    0,
+	PARSE_STATE_SCALAR, // 20
+	PARSE_STATE_ARRAY_START,
+	PARSE_STATE_OBJECT_START,
+    PARSE_STATE_END,
     0,
     0,
     0,
@@ -76,10 +77,10 @@ static u8 validNewStates[115] = {
     0, // 30
     0,
     // Valid states from PARSE_STATE_OBJECT_END, CONTAINER_NONE
+	PARSE_STATE_SCALAR,
+	PARSE_STATE_ARRAY_START,
+	PARSE_STATE_OBJECT_START,
     PARSE_STATE_END,
-    255,
-    0,
-    0,
     0,
     0,
     0,
@@ -190,8 +191,8 @@ typedef struct {
 	u64 stringLineNumber;
 	// packed bits - 0 means array, 1 means object. Max depth is 127
 	u8 containerStack[16];
-	// -1 is initial position
 	JsonParseState parseState;
+	// -1 is initial position, max depth is 127
 	s8 containerStackPos;
 } JsonStringReader;
 
@@ -203,6 +204,11 @@ JsonStringReader newJsonStringReader(String s) {
 	    .containerStackPos = -1,
 	};
 	return r;
+}
+
+void resetJsonStringReader(JsonStringReader r) {
+	r.parseState = PARSE_STATE_START;
+	r.containerStackPos = -1;
 }
 
 Container getCurrentContainer(JsonStringReader const *r) {
@@ -230,7 +236,7 @@ u8 isValidNewState(JsonStringReader const *r, JsonParseState newState) {
 	return false;
 }
 
-// findEndQuoteIndex finds the index of the closing quoteation mark character.
+// findEndQuoteIndex finds the index of the closing quotation mark character.
 // If there is some error, this returns 0.
 u64 findEndQuoteIndex(String s, u64 startIndex) {
 	u64 i = startIndex;
@@ -503,27 +509,29 @@ JsonToken jsonNext(JsonStringReader *r) {
 	return (JsonToken){.tokenType = TOKEN_TYPE_EOF};
 }
 
-internal void printWhitespace(u8 indentAmount, s8 indentLevel, JsonTokenType thisToken, JsonTokenType lastToken) {
+internal void printWhitespace(u8 indentAmount, u8 indentLevel, JsonTokenType thisToken, JsonTokenType lastToken) {
+	//printf("\nindentLevel %d; lastToken %d; thisToken %d\n", indentLevel, lastToken, thisToken);
+
 	switch (lastToken) {
 	case TOKEN_TYPE_STRING:
 	case TOKEN_TYPE_NUMBER:
 	case TOKEN_TYPE_TRUE:
 	case TOKEN_TYPE_FALSE:
 	case TOKEN_TYPE_NULL:
-		if (thisToken != TOKEN_TYPE_ARRAY_END && thisToken != TOKEN_TYPE_OBJECT_END) {
+		if (thisToken != TOKEN_TYPE_ARRAY_END && thisToken != TOKEN_TYPE_OBJECT_END && indentLevel != 0) {
 			printChar(",");
 		}
 	default:
 		break;
 	}
 
-	if (thisToken != TOKEN_TYPE_ARRAY_START && thisToken != TOKEN_TYPE_OBJECT_START) {
-		indentLevel += 1;
-	}
 	if ((lastToken == TOKEN_TYPE_OBJECT_END || lastToken == TOKEN_TYPE_ARRAY_END) &&
-	    thisToken != TOKEN_TYPE_ARRAY_END && thisToken != TOKEN_TYPE_OBJECT_END && indentAmount != 0) {
+	    thisToken != TOKEN_TYPE_ARRAY_END && thisToken != TOKEN_TYPE_OBJECT_END && indentLevel != 0) {
 		printChar(",");
 	}
+	//if (thisToken != TOKEN_TYPE_ARRAY_START && thisToken != TOKEN_TYPE_OBJECT_START) {
+	//	indentLevel += 1;
+	//}
 	if (lastToken != TOKEN_TYPE_OBJECT_KEY) {
 		int emptyObject = (lastToken == TOKEN_TYPE_OBJECT_START && thisToken == TOKEN_TYPE_OBJECT_END);
 		int emptyArray = (lastToken == TOKEN_TYPE_ARRAY_START && thisToken == TOKEN_TYPE_ARRAY_END);

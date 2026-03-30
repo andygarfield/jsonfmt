@@ -8,6 +8,8 @@
 #define SYSCALL_WRITE 0x1
 #endif
 
+#ifndef DEBUG_W_STDLIB
 internal s64 write_(int fd, const void *data, u64 nbytes) {
 	return (s64)syscall5(INT2VOIDP(fd), (const void *)data, UINT2VOIDP(nbytes), 0, 0, (void *)SYSCALL_WRITE);
 }
+#endif
