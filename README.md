@@ -1,6 +1,6 @@
 # jsonfmt
 A Simple JSON formatter written in C99, without the C standard library. Not
-crazy fast, but roughlt 2-10 times faster than [jq](https://jqlang.org/),
+crazy fast, but roughly 2-10 times faster than [jq](https://jqlang.org/),
 depending on what you're doing.
 
 ## building
