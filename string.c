@@ -45,7 +45,6 @@ static u16 writeBufferPos = 0;
 static char writeBuffer[2 << 13] = {0};
 
 #ifdef DEBUG_W_STDLIB
-#pragma once
 #include <stdio.h>
 internal void printFlush() {}
 internal void printRefString(String s, RefString r) { printf("%*.*s", (int)r.len, (int)r.len, s.buffer + r.start); }
