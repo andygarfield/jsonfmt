@@ -510,8 +510,6 @@ JsonToken jsonNext(JsonStringReader *r) {
 }
 
 internal void printWhitespace(u8 indentAmount, u8 indentLevel, JsonTokenType thisToken, JsonTokenType lastToken) {
-	//printf("\nindentLevel %d; lastToken %d; thisToken %d\n", indentLevel, lastToken, thisToken);
-
 	switch (lastToken) {
 	case TOKEN_TYPE_STRING:
 	case TOKEN_TYPE_NUMBER:
@@ -529,9 +527,7 @@ internal void printWhitespace(u8 indentAmount, u8 indentLevel, JsonTokenType thi
 	    thisToken != TOKEN_TYPE_ARRAY_END && thisToken != TOKEN_TYPE_OBJECT_END && indentLevel != 0) {
 		printChar(",");
 	}
-	//if (thisToken != TOKEN_TYPE_ARRAY_START && thisToken != TOKEN_TYPE_OBJECT_START) {
-	//	indentLevel += 1;
-	//}
+
 	if (lastToken != TOKEN_TYPE_OBJECT_KEY) {
 		int emptyObject = (lastToken == TOKEN_TYPE_OBJECT_START && thisToken == TOKEN_TYPE_OBJECT_END);
 		int emptyArray = (lastToken == TOKEN_TYPE_ARRAY_START && thisToken == TOKEN_TYPE_ARRAY_END);

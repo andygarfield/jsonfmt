@@ -11,12 +11,12 @@ GCC_DB_FLAGS = -O0 -ggdb -z noexecstack
 C_SRC=$(wildcard **.c)
 H_SRC=$(wildcard **.h)
 
-jsonfmt_mac: start_mac.S $(C_SRC) $(H_SRC)
+jsonfmt_mac: start_mac.s $(C_SRC) $(H_SRC)
 	clang $(CLANG_FLAGS) -o $@ start_mac.s root.c
-jsonfmt_mac_db: start_mac.S $(C_SRC) $(H_SRC)
+jsonfmt_mac_db: start_mac.s $(C_SRC) $(H_SRC)
 	clang $(CLANG_DB_FLAGS) -o $@ start_mac.s root.c
 
-jsonfmt_linux: start_linux.S $(C_SRC) $(H_SRC)
+jsonfmt_linux: start_linux.s $(C_SRC) $(H_SRC)
 	gcc $(GCC_FLAGS) -o $@ start_linux.s root.c
-jsonfmt_linux_db: start_linux.S $(C_SRC) $(H_SRC)
+jsonfmt_linux_db: start_linux.s $(C_SRC) $(H_SRC)
 	gcc $(GCC_DB_FLAGS) -o $@ start_linux.s root.c
