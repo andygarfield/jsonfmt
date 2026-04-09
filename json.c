@@ -41,137 +41,137 @@ typedef enum {
 /// state has only 4 valid new states, where we use `255` if we don't need to
 /// iterate any more.
 static u8 validNewStates[] = {
-    // Valid states from PARSE_STATE_START, CONTAINER_NONE
+	// Valid states from PARSE_STATE_START, CONTAINER_NONE
 	PARSE_STATE_SCALAR,
 	PARSE_STATE_ARRAY_START,
 	PARSE_STATE_OBJECT_START,
 	255,
-    // Valid states from PARSE_STATE_SCALAR, CONTAINER_NONE
+	// Valid states from PARSE_STATE_SCALAR, CONTAINER_NONE
 	PARSE_STATE_SCALAR,
 	PARSE_STATE_ARRAY_START,
 	PARSE_STATE_OBJECT_START,
 	PARSE_STATE_END,
 	0,
-    0,
-    0, // 10
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    // Valid states from PARSE_STATE_ARRAY_END, CONTAINER_NONE
+	0,
+	0, // 10
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	// Valid states from PARSE_STATE_ARRAY_END, CONTAINER_NONE
 	PARSE_STATE_SCALAR, // 20
 	PARSE_STATE_ARRAY_START,
 	PARSE_STATE_OBJECT_START,
-    PARSE_STATE_END,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0, // 30
-    0,
-    // Valid states from PARSE_STATE_OBJECT_END, CONTAINER_NONE
+	PARSE_STATE_END,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0, // 30
+	0,
+	// Valid states from PARSE_STATE_OBJECT_END, CONTAINER_NONE
 	PARSE_STATE_SCALAR,
 	PARSE_STATE_ARRAY_START,
 	PARSE_STATE_OBJECT_START,
-    PARSE_STATE_END,
-    0,
-    0,
-    0,
-    0,
-    0, // 40
-    0,
-    0,
-    0,
-    // Valid states from PARSE_STATE_SCALAR, CONTAINER_ARRAY
-    PARSE_STATE_ARRAY_END,
-    PARSE_STATE_COMMA,
-    255,
-    0,
-    // Valid states from PARSE_STATE_COMMA, CONTAINER_ARRAY
-    PARSE_STATE_SCALAR,
-    PARSE_STATE_ARRAY_START,
-    PARSE_STATE_OBJECT_START, // 50
-    255,
-    0,
-    0,
-    0,
-    0,
-    // Valid states from PARSE_STATE_ARRAY_START, CONTAINER_ARRAY
-    PARSE_STATE_SCALAR,
-    PARSE_STATE_ARRAY_START,
-    PARSE_STATE_OBJECT_START,
-    PARSE_STATE_ARRAY_END,
-    // Valid states from PARSE_STATE_ARRAY_END, CONTAINER_ARRAY
-    PARSE_STATE_COMMA, // 60
-    PARSE_STATE_ARRAY_END,
-    255,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0, // 70
-    0,
-    // Valid states from PARSE_STATE_OBJECT_END, CONTAINER_ARRAY
-    PARSE_STATE_COMMA,
-    PARSE_STATE_ARRAY_END,
-    255,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0, // 80
-    0,
-    0,
-    0,
-    // Valid states from PARSE_STATE_SCALAR, CONTAINER_OBJECT
-    PARSE_STATE_COMMA,
-    PARSE_STATE_OBJECT_END,
-    255,
-    0,
-    // Valid states from PARSE_STATE_COMMA, CONTAINER_OBJECT
-    PARSE_STATE_OBJECT_KEY,
-    255,
-    0, // 90
-    0,
-    // Valid states from PARSE_STATE_COLON, CONTAINER_OBJECT
-    PARSE_STATE_SCALAR,
-    PARSE_STATE_ARRAY_START,
-    PARSE_STATE_OBJECT_START,
-    255,
-    0,
-    0,
-    0,
-    0,
-    // Valid states from PARSE_STATE_ARRAY_END, CONTAINER_OBJECT
-    PARSE_STATE_COMMA, // 100
-    PARSE_STATE_OBJECT_END,
-    255,
-    0,
-    // Valid states from PARSE_STATE_OBJECT_START, CONTAINER_OBJECT
-    PARSE_STATE_OBJECT_KEY,
-    PARSE_STATE_OBJECT_END,
-    255,
-    0,
-    // Valid states from PARSE_STATE_OBJECT_KEY, CONTAINER_OBJECT
-    PARSE_STATE_COLON,
-    255,
-    0, // 110
-    0,
-    // Valid states from PARSE_STATE_OBJECT_END, CONTAINER_OBJECT
-    PARSE_STATE_COMMA,
-    PARSE_STATE_OBJECT_END,
-    255
+	PARSE_STATE_END,
+	0,
+	0,
+	0,
+	0,
+	0, // 40
+	0,
+	0,
+	0,
+	// Valid states from PARSE_STATE_SCALAR, CONTAINER_ARRAY
+	PARSE_STATE_ARRAY_END,
+	PARSE_STATE_COMMA,
+	255,
+	0,
+	// Valid states from PARSE_STATE_COMMA, CONTAINER_ARRAY
+	PARSE_STATE_SCALAR,
+	PARSE_STATE_ARRAY_START,
+	PARSE_STATE_OBJECT_START, // 50
+	255,
+	0,
+	0,
+	0,
+	0,
+	// Valid states from PARSE_STATE_ARRAY_START, CONTAINER_ARRAY
+	PARSE_STATE_SCALAR,
+	PARSE_STATE_ARRAY_START,
+	PARSE_STATE_OBJECT_START,
+	PARSE_STATE_ARRAY_END,
+	// Valid states from PARSE_STATE_ARRAY_END, CONTAINER_ARRAY
+	PARSE_STATE_COMMA, // 60
+	PARSE_STATE_ARRAY_END,
+	255,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0, // 70
+	0,
+	// Valid states from PARSE_STATE_OBJECT_END, CONTAINER_ARRAY
+	PARSE_STATE_COMMA,
+	PARSE_STATE_ARRAY_END,
+	255,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0, // 80
+	0,
+	0,
+	0,
+	// Valid states from PARSE_STATE_SCALAR, CONTAINER_OBJECT
+	PARSE_STATE_COMMA,
+	PARSE_STATE_OBJECT_END,
+	255,
+	0,
+	// Valid states from PARSE_STATE_COMMA, CONTAINER_OBJECT
+	PARSE_STATE_OBJECT_KEY,
+	255,
+	0, // 90
+	0,
+	// Valid states from PARSE_STATE_COLON, CONTAINER_OBJECT
+	PARSE_STATE_SCALAR,
+	PARSE_STATE_ARRAY_START,
+	PARSE_STATE_OBJECT_START,
+	255,
+	0,
+	0,
+	0,
+	0,
+	// Valid states from PARSE_STATE_ARRAY_END, CONTAINER_OBJECT
+	PARSE_STATE_COMMA, // 100
+	PARSE_STATE_OBJECT_END,
+	255,
+	0,
+	// Valid states from PARSE_STATE_OBJECT_START, CONTAINER_OBJECT
+	PARSE_STATE_OBJECT_KEY,
+	PARSE_STATE_OBJECT_END,
+	255,
+	0,
+	// Valid states from PARSE_STATE_OBJECT_KEY, CONTAINER_OBJECT
+	PARSE_STATE_COLON,
+	255,
+	0, // 110
+	0,
+	// Valid states from PARSE_STATE_OBJECT_END, CONTAINER_OBJECT
+	PARSE_STATE_COMMA,
+	PARSE_STATE_OBJECT_END,
+	255
 };
 
 // clang-format on
@@ -507,40 +507,4 @@ JsonToken jsonNext(JsonStringReader *r) {
 	}
 
 	return (JsonToken){.tokenType = TOKEN_TYPE_EOF};
-}
-
-internal void printWhitespace(u8 indentAmount, u8 indentLevel, JsonTokenType thisToken, JsonTokenType lastToken) {
-	switch (lastToken) {
-	case TOKEN_TYPE_STRING:
-	case TOKEN_TYPE_NUMBER:
-	case TOKEN_TYPE_TRUE:
-	case TOKEN_TYPE_FALSE:
-	case TOKEN_TYPE_NULL:
-		if (thisToken != TOKEN_TYPE_ARRAY_END && thisToken != TOKEN_TYPE_OBJECT_END && indentLevel != 0) {
-			printChar(",");
-		}
-	default:
-		break;
-	}
-
-	if ((lastToken == TOKEN_TYPE_OBJECT_END || lastToken == TOKEN_TYPE_ARRAY_END) &&
-	    thisToken != TOKEN_TYPE_ARRAY_END && thisToken != TOKEN_TYPE_OBJECT_END && indentLevel != 0) {
-		printChar(",");
-	}
-
-	if (lastToken != TOKEN_TYPE_OBJECT_KEY) {
-		int emptyObject = (lastToken == TOKEN_TYPE_OBJECT_START && thisToken == TOKEN_TYPE_OBJECT_END);
-		int emptyArray = (lastToken == TOKEN_TYPE_ARRAY_START && thisToken == TOKEN_TYPE_ARRAY_END);
-		int veryStart = (lastToken == 0);
-
-		if (!(emptyObject || emptyArray || veryStart)) {
-			printChar("\n");
-
-			for (size_t i = 0; i < (u8)(indentLevel); i++) {
-				for (size_t j = 0; j < indentAmount; j++) {
-					printChar(" ");
-				}
-			}
-		}
-	}
 }

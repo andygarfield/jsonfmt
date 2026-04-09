@@ -1,7 +1,53 @@
 #pragma once
 #include "root.unity.h"
+#include <stdio.h>
+#include <sys/time.h>
 
 #define INDENT_AMOUNT 2
+
+unsigned long long currentMilliseconds() {
+	struct timeval tv;
+
+	gettimeofday(&tv, NULL);
+
+	return (unsigned long long)(tv.tv_sec) * 1000 + (unsigned long long)(tv.tv_usec) / 1000;
+}
+
+internal void printWhitespace(u8 indentAmount, u8 indentLevel, JsonTokenType thisToken, JsonTokenType lastToken) {
+	switch (lastToken) {
+	case TOKEN_TYPE_STRING:
+	case TOKEN_TYPE_NUMBER:
+	case TOKEN_TYPE_TRUE:
+	case TOKEN_TYPE_FALSE:
+	case TOKEN_TYPE_NULL:
+		if (thisToken != TOKEN_TYPE_ARRAY_END && thisToken != TOKEN_TYPE_OBJECT_END && indentLevel != 0) {
+			printChar(",");
+		}
+	default:
+		break;
+	}
+
+	if ((lastToken == TOKEN_TYPE_OBJECT_END || lastToken == TOKEN_TYPE_ARRAY_END) &&
+	    thisToken != TOKEN_TYPE_ARRAY_END && thisToken != TOKEN_TYPE_OBJECT_END && indentLevel != 0) {
+		printChar(",");
+	}
+
+	if (lastToken != TOKEN_TYPE_OBJECT_KEY) {
+		int emptyObject = (lastToken == TOKEN_TYPE_OBJECT_START && thisToken == TOKEN_TYPE_OBJECT_END);
+		int emptyArray = (lastToken == TOKEN_TYPE_ARRAY_START && thisToken == TOKEN_TYPE_ARRAY_END);
+		int veryStart = (lastToken == 0);
+
+		if (!(emptyObject || emptyArray || veryStart)) {
+			printChar("\n");
+
+			for (size_t i = 0; i < (u8)(indentLevel); i++) {
+				for (size_t j = 0; j < indentAmount; j++) {
+					printChar(" ");
+				}
+			}
+		}
+	}
+}
 
 int main(int argc, char *argv[]) {
 	(void)argc;
@@ -12,6 +58,7 @@ int main(int argc, char *argv[]) {
 	// TODO: this is assuming 4096 bytes per page. Page size is
 	// architecture-dependent though. For instance, on Arm-based Macs, the page
 	// size is 16kb.
+	// unsigned long long start = currentMilliseconds();
 	u64 fileBufferPages = 128000;
 	u8 *fileBuffer = allocPages(fileBufferPages);
 	// TODO: add this back later to check if we're out of range
@@ -29,6 +76,10 @@ int main(int argc, char *argv[]) {
 
 		fileBuffer += numBytesRead;
 	}
+
+	// unsigned long long end = currentMilliseconds();
+	// printf("%llu\n", end - start);
+	// start = end;
 	String wholeBufferStr = {.buffer = startPos, .len = fileBuffer - startPos};
 	JsonStringReader r = newJsonStringReader(wholeBufferStr);
 	JsonToken t;
@@ -88,14 +139,10 @@ int main(int argc, char *argv[]) {
 			printChar("]");
 			break;
 		case TOKEN_TYPE_EOF:
-			// 2 EOFs in a row means we really hit the end of the file
-			if (lastToken == TOKEN_TYPE_EOF) {
-				goto afterLoop;
-			}
 			printChar("\n");
 			lastToken = t.tokenType;
 			resetJsonStringReader(r);
-			break;
+			goto afterLoop;
 		case TOKEN_TYPE_ERROR:
 			printChar("\nparse error\n");
 			printFlush();
@@ -108,5 +155,7 @@ int main(int argc, char *argv[]) {
 	}
 afterLoop:
 	printFlush();
+	// end = currentMilliseconds();
+	// printf("%llu\n", end - start);
 	return 0;
 }
