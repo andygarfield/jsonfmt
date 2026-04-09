@@ -34,7 +34,8 @@ jsonfmt my_file.json
 - [x] Parity with JQ formatting
 - [ ] Support for arm64
 - [ ] Windows support
+- [ ] Correct unicode handling
 - [ ] Do proper number parsing
 - [ ] Minifying
 - [ ] Configuration
-- [ ] Use non-blocking syscalls (kqueue / kevent on mac; io_uring on linux)
+- [ ] Use non-blocking syscalls (lio_listio on mac; io_uring on linux)
