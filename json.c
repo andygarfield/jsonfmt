@@ -35,17 +35,19 @@ typedef enum {
 	CONTAINER_OBJECT,
 } Container;
 
+#define STOP_ITERATION 255
+
 // clang-format off
 
 /// Table mapping the current state of the parser with valid new states. Each
-/// state has only 4 valid new states, where we use `255` if we don't need to
+/// state has only 4 valid new states, where we use `STOP_ITERATION` if we don't need to
 /// iterate any more.
 static u8 validNewStates[] = {
 	// Valid states from PARSE_STATE_START, CONTAINER_NONE
 	PARSE_STATE_SCALAR,
 	PARSE_STATE_ARRAY_START,
 	PARSE_STATE_OBJECT_START,
-	255,
+	STOP_ITERATION,
 	// Valid states from PARSE_STATE_SCALAR, CONTAINER_NONE
 	PARSE_STATE_SCALAR,
 	PARSE_STATE_ARRAY_START,
@@ -92,13 +94,13 @@ static u8 validNewStates[] = {
 	// Valid states from PARSE_STATE_SCALAR, CONTAINER_ARRAY
 	PARSE_STATE_ARRAY_END,
 	PARSE_STATE_COMMA,
-	255,
+	STOP_ITERATION,
 	0,
 	// Valid states from PARSE_STATE_COMMA, CONTAINER_ARRAY
 	PARSE_STATE_SCALAR,
 	PARSE_STATE_ARRAY_START,
 	PARSE_STATE_OBJECT_START, // 50
-	255,
+	STOP_ITERATION,
 	0,
 	0,
 	0,
@@ -111,7 +113,7 @@ static u8 validNewStates[] = {
 	// Valid states from PARSE_STATE_ARRAY_END, CONTAINER_ARRAY
 	PARSE_STATE_COMMA, // 60
 	PARSE_STATE_ARRAY_END,
-	255,
+	STOP_ITERATION,
 	0,
 	0,
 	0,
@@ -124,7 +126,7 @@ static u8 validNewStates[] = {
 	// Valid states from PARSE_STATE_OBJECT_END, CONTAINER_ARRAY
 	PARSE_STATE_COMMA,
 	PARSE_STATE_ARRAY_END,
-	255,
+	STOP_ITERATION,
 	0,
 	0,
 	0,
@@ -137,18 +139,18 @@ static u8 validNewStates[] = {
 	// Valid states from PARSE_STATE_SCALAR, CONTAINER_OBJECT
 	PARSE_STATE_COMMA,
 	PARSE_STATE_OBJECT_END,
-	255,
+	STOP_ITERATION,
 	0,
 	// Valid states from PARSE_STATE_COMMA, CONTAINER_OBJECT
 	PARSE_STATE_OBJECT_KEY,
-	255,
+	STOP_ITERATION,
 	0, // 90
 	0,
 	// Valid states from PARSE_STATE_COLON, CONTAINER_OBJECT
 	PARSE_STATE_SCALAR,
 	PARSE_STATE_ARRAY_START,
 	PARSE_STATE_OBJECT_START,
-	255,
+	STOP_ITERATION,
 	0,
 	0,
 	0,
@@ -156,22 +158,22 @@ static u8 validNewStates[] = {
 	// Valid states from PARSE_STATE_ARRAY_END, CONTAINER_OBJECT
 	PARSE_STATE_COMMA, // 100
 	PARSE_STATE_OBJECT_END,
-	255,
+	STOP_ITERATION,
 	0,
 	// Valid states from PARSE_STATE_OBJECT_START, CONTAINER_OBJECT
 	PARSE_STATE_OBJECT_KEY,
 	PARSE_STATE_OBJECT_END,
-	255,
+	STOP_ITERATION,
 	0,
 	// Valid states from PARSE_STATE_OBJECT_KEY, CONTAINER_OBJECT
 	PARSE_STATE_COLON,
-	255,
+	STOP_ITERATION,
 	0, // 110
 	0,
 	// Valid states from PARSE_STATE_OBJECT_END, CONTAINER_OBJECT
 	PARSE_STATE_COMMA,
 	PARSE_STATE_OBJECT_END,
-	255
+	STOP_ITERATION
 };
 
 // clang-format on
@@ -226,7 +228,7 @@ u8 isValidNewState(JsonStringReader const *r, JsonParseState newState) {
 
 	u64 i = getValidNewStateIndex(r->parseState, currentContainer);
 	for (u8 j = 0; j < 4; j++) {
-		if (validNewStates[i + j] == 255) {
+		if (validNewStates[i + j] == STOP_ITERATION) {
 			break;
 		} else if (validNewStates[i + j] == newState) {
 			return true;

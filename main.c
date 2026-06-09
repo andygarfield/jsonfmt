@@ -5,14 +5,6 @@
 
 #define INDENT_AMOUNT 2
 
-unsigned long long currentMilliseconds() {
-	struct timeval tv;
-
-	gettimeofday(&tv, NULL);
-
-	return (unsigned long long)(tv.tv_sec) * 1000 + (unsigned long long)(tv.tv_usec) / 1000;
-}
-
 internal void printWhitespace(u8 indentAmount, u8 indentLevel, JsonTokenType thisToken, JsonTokenType lastToken) {
 	switch (lastToken) {
 	case TOKEN_TYPE_STRING:
@@ -58,7 +50,6 @@ int main(int argc, char *argv[]) {
 	// TODO: this is assuming 4096 bytes per page. Page size is
 	// architecture-dependent though. For instance, on Arm-based Macs, the page
 	// size is 16kb.
-	// unsigned long long start = currentMilliseconds();
 	u64 fileBufferPages = 128000;
 	u8 *fileBuffer = allocPages(fileBufferPages);
 	// TODO: add this back later to check if we're out of range
@@ -77,9 +68,6 @@ int main(int argc, char *argv[]) {
 		fileBuffer += numBytesRead;
 	}
 
-	// unsigned long long end = currentMilliseconds();
-	// printf("%llu\n", end - start);
-	// start = end;
 	String wholeBufferStr = {.buffer = startPos, .len = fileBuffer - startPos};
 	JsonStringReader r = newJsonStringReader(wholeBufferStr);
 	JsonToken t;
@@ -155,7 +143,5 @@ int main(int argc, char *argv[]) {
 	}
 afterLoop:
 	printFlush();
-	// end = currentMilliseconds();
-	// printf("%llu\n", end - start);
 	return 0;
 }
